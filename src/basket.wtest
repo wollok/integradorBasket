@@ -1,0 +1,75 @@
+import basket.*
+
+describe "Test de basket" {
+
+const j1 = new Jugador( posicion = rebotero, altura = 180, localidad = "Campana", eficaciaDeTriples = 80)
+const j2 = new Jugador( posicion = tirador, altura = 150, localidad = "Campana", eficaciaDeTriples = 100, sucio = true, talentos = ["unico"] )
+const j3 = new Jugador( posicion = pasador, altura = 200, localidad = "Zarate", eficaciaDeTriples = 40, talentos = ["talento especial", "talento"])
+
+const e1 = new EntrenadorExperimentado( localidad = "Campana", aniosDeEntrenador = 25, torneosGanados = 1)
+const e2 = new EntrenadorVendeHumo( localidad = "Bs As", entrenadorCopiado = e1, torneosGanados = 0)
+
+const campanaBasket = new Equipo( localidad = "Campana", integrantes = [j1,j2,e1] )
+const zarateBasket = new Equipo( localidad = "Zarate", integrantes = [j3,e2] )
+
+const clasico = new Partido(equipo1 = campanaBasket, equipo2 = zarateBasket)
+
+test "Campana es localista " {
+	assert.that( campanaBasket.esLocalista())
+}
+
+test "Zarate no es localista " {
+	assert.notThat( zarateBasket.esLocalista())
+}
+
+test "habilidad de un rebotero" {
+	assert.equals( (180+20)*1.1, j1.habilidad())
+}
+
+test "habilidad de un pasador" {
+	assert.equals( (200*0.75 + 40*0.25)*1, j3.habilidad())
+}
+
+test "habilidad de un tirador" {
+	assert.equals( (100*1 + 150/3)*0.5, j2.habilidad())
+}
+
+test "habilidad de un tipo de entrenador experimentado" {
+    assert.equals( 25 + 1 , e1.habilidad() )
+}
+
+test "habilidad de un tipo de entrenador vende humo" {
+    assert.equals( 26 * 0.75, e2.habilidad() )
+}
+
+test "Entrenador gana torneo" {
+	e1.pasaElTiempo()
+	assert.equals(2, e1.torneosGanados() )
+}
+
+test "puntaje de campana" {
+	assert.equals( 107, campanaBasket.puntaje() )
+}
+
+test "puntaje de zarate " {
+	assert.equals( 89, zarateBasket.puntaje() )
+}
+
+test "El clásico lo gana campana"{
+	assert.equals( campanaBasket, clasico.ganador() )
+}
+
+test "El clasico no es una victoria aplastante" { 
+	assert.notThat( clasico.victoriaAplastante() )
+}
+
+test "El clasico con un entrenador mas experimentado es una victoria aplastante" { 
+	6.times({x=>e1.pasaElTiempo()})
+	assert.notThat( clasico.victoriaAplastante() )
+}
+
+test "Jugador es crack " {    
+	assert.that( j1.esCrack() )
+}
+
+}
